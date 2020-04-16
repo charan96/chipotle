@@ -1,5 +1,7 @@
 package com.ramcharans.chipotle.order.controller;
 
+import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
+import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,25 +19,28 @@ public class OrderController {
     OrderService orderService;
 
     @GetMapping(path = "/", produces = "application/json")
-    public ResponseEntity<List<Order>> getAllOrders() {
+    public ResponseEntity<Object> getAllOrders() {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
     }
 
     @PostMapping(path = "/submit", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Order> submitOrder(@RequestBody OrderRequest orderRequest) {
-        Order order = orderService.buildOrder(orderRequest.getCustomerName(), orderRequest.getIngredientIds());
-        orderService.saveOrder(order);
-
-        return new ResponseEntity<>(order, HttpStatus.OK);
+    public ResponseEntity<Object> submitOrder(@RequestBody OrderRequest orderRequest) {
+        try {
+            Order order = orderService.buildAndSaveOrder(orderRequest.getCustomerName(),
+                    orderRequest.getIngredientIds());
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } catch (IngredientNotFoundException e) {
+            return new ResponseEntity<>("one of the ingredient IDs provided does not exist", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping(path = "/find/{order_id}", produces = "application/json")
-    public ResponseEntity<Order> findOrderById(@PathVariable Long order_id) {
-        Optional<Order> order = orderService.findOrder(order_id);
-
-        if (order.isPresent())
-            return new ResponseEntity<>(order.get(), HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping(path = "/find", produces = "application/json")
+    public ResponseEntity<Object> findOrderById(@RequestParam Long id) {
+        try {
+            Order order = orderService.findOrder(id);
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } catch (OrderNotFoundException e) {
+            return new ResponseEntity<>("no order found with given ID", HttpStatus.NOT_FOUND);
+        }
     }
 }

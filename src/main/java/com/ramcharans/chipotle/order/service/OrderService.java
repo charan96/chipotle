@@ -1,12 +1,15 @@
 package com.ramcharans.chipotle.order.service;
 
+import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.order.dao.OrderDAO;
 import com.ramcharans.chipotle.ingredient.service.IngredientsService;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
+import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,8 +25,14 @@ public class OrderService {
         return Math.abs(new Random().nextLong());
     }
 
-    public Order buildOrder(String customerName, List<Long> ingredientIds) {
-        // todo: need to add custom exception handling here
+    public Order buildAndSaveOrder(String customerName, List<Long> ingredientIds) throws IngredientNotFoundException {
+        Order order = buildOrder(customerName, ingredientIds);
+        saveOrder(order);
+
+        return order;
+    }
+
+    public Order buildOrder(String customerName, List<Long> ingredientIds) throws IngredientNotFoundException {
         // NOTE: the order building logic should go here instead of a separate Factory class since building the order
         // NOTE contd.: is part of the business logic that needs to be handled by the service; in case, the Order class
         // NOTE contd.: changes in the future, we only need to look here to make changes; the factory class will lead to
@@ -40,14 +49,14 @@ public class OrderService {
         return order;
     }
 
-    private List<Ingredient> createIngredientListFromIds(List<Long> ids) {
+    private List<Ingredient> createIngredientListFromIds(List<Long> ids) throws IngredientNotFoundException {
         List<Ingredient> ingredients = new ArrayList<>();
 
         for (Long id : ids) {
             if (ingredientsService.getIngredientById(id).isPresent())
                 ingredients.add(ingredientsService.getIngredientById(id).get());
             else
-                throw new RuntimeException("ingredient ID doesn't exist");
+                throw new IngredientNotFoundException("ingredient ID doesn't exist");
         }
 
         return ingredients;
@@ -61,11 +70,13 @@ public class OrderService {
         return orderDAO.getOrders();
     }
 
-    public Optional<Order> findOrder(Long id) {
-        return orderDAO.getOrders()
-                .stream()
-                .filter(order -> order.getId().equals(id))
-                .findAny();
+    public Order findOrder(Long id) throws OrderNotFoundException {
+        Optional<Order> order = orderDAO.findOrderById(id);
+
+        if (order.isPresent())
+            return order.get();
+        else
+            throw new OrderNotFoundException();
     }
 
     private Double calculateOrderTotal(Order order) {

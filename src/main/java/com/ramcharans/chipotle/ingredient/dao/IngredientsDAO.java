@@ -24,13 +24,20 @@ public class IngredientsDAO {
     public void addIngredientToAvailableIngredients(Ingredient ingredient) throws ValueExistsInListException {
         List<Ingredient> ingredients = getAvailableIngredients();
 
-        if (ingredients.contains(ingredient))
+        if (ingredients.stream().anyMatch(ing -> isSameIngredient(ing, ingredient)))
             throw new ValueExistsInListException();
 
         ingredient.setId(createNewIngredientId());
         updateIngredientsInDB(ingredient);
 
         availableIngredients.add(ingredient);
+    }
+
+    private boolean isSameIngredient(Ingredient i1, Ingredient i2) {
+        boolean nameEquivalency = i1.getName().equals(i2.getName());
+        boolean typeEquivalency = i1.getType().equals(i2.getType());
+
+        return nameEquivalency && typeEquivalency;
     }
 
     private Long createNewIngredientId() {

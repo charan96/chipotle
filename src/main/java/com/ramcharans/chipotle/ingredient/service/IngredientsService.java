@@ -29,9 +29,9 @@ public class IngredientsService {
             ingredientsDAO.addIngredientToAvailableIngredients(ingredient);
         } catch (ValueExistsInListException e) {
             throw new IngredientAlreadyExistsException(MessageFormat.format(
-                    "following ingredient already exists in DB: {}", ingredient));
+                    "following ingredient already exists in DB: {0}", ingredient));
         } catch (Exception e) {
-            throw new FailedToAddIngredientException(MessageFormat.format("failed to add ingredient: {}", ingredient));
+            throw new FailedToAddIngredientException(MessageFormat.format("failed to add ingredient: {0}", ingredient));
         }
     }
 
