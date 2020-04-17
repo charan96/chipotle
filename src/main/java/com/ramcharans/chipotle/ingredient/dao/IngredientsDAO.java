@@ -3,14 +3,14 @@ package com.ramcharans.chipotle.ingredient.dao;
 import com.ramcharans.chipotle.ingredient.exceptions.ValueExistsInListException;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.model.Ingredient.Type;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class IngredientsDAO {
     private List<Ingredient> availableIngredients;
 

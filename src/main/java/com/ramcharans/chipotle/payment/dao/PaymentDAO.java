@@ -1,13 +1,13 @@
 package com.ramcharans.chipotle.payment.dao;
 
 import com.ramcharans.chipotle.payment.model.Payment;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 public class PaymentDAO {
     private List<Payment> payments = new ArrayList<>();
 

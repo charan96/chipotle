@@ -1,13 +1,14 @@
 package com.ramcharans.chipotle.order.dao;
 
 import com.ramcharans.chipotle.order.model.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 public class OrderDAO {
     private List<Order> orders = new ArrayList<>();
 

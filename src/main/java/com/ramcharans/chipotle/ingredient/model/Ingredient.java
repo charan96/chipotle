@@ -3,12 +3,15 @@ package com.ramcharans.chipotle.ingredient.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ingredient {
+@RedisHash("Ingredient")
+public class Ingredient implements Serializable {
     public static enum Type {RICE, MEAT, VEGGIE, SALSA, BEANS, ADDON}
 
     private Long id;
