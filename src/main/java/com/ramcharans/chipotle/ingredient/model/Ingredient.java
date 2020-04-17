@@ -3,18 +3,20 @@ package com.ramcharans.chipotle.ingredient.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash("Ingredient")
+@Document(collection = "ingredient")
 public class Ingredient implements Serializable {
     public static enum Type {RICE, MEAT, VEGGIE, SALSA, BEANS, ADDON}
 
-    private Long id;
+    @Id
+    private String id;
     private String name;
     private Type type;
     private Double price;

@@ -2,6 +2,7 @@ package com.ramcharans.chipotle.ingredient.controller;
 
 import com.ramcharans.chipotle.ingredient.exceptions.FailedToAddIngredientException;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientAlreadyExistsException;
+import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.model.Ingredient.Type;
 import com.ramcharans.chipotle.ingredient.service.IngredientsService;
@@ -24,19 +25,19 @@ public class IngredientController {
         return new ResponseEntity<>(ingredientsService.getAvailableIngredients(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/addIngredient", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> addIngredient(@RequestBody Ingredient ingredient) {
         try {
-            ingredientsService.addIngredient(ingredient);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (FailedToAddIngredientException e) {
-            return new ResponseEntity<>("failed to add ingredient", HttpStatus.INTERNAL_SERVER_ERROR);
+            String ingredientId = ingredientsService.addIngredient(ingredient);
+            return new ResponseEntity<>(ingredientId, HttpStatus.OK);
         } catch (IngredientAlreadyExistsException e) {
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
+        } catch (FailedToAddIngredientException e) {
+            return new ResponseEntity<>("failed to add ingredient: ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping(value = "/addIngredients", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/addMany", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> addIngredients(@RequestBody List<Ingredient> ingredients) {
         try {
             for (Ingredient ingredient : ingredients)
@@ -51,7 +52,7 @@ public class IngredientController {
     }
 
     @GetMapping(value = "/filter/id/{id}", produces = "application/json")
-    public ResponseEntity<Object> getIngredientById(@PathVariable Long id) {
+    public ResponseEntity<Object> findIngredientById(@PathVariable String id) {
         Optional<Ingredient> ingredient = ingredientsService.getIngredientById(id);
 
         if (ingredient.isPresent())
@@ -61,12 +62,22 @@ public class IngredientController {
     }
 
     @GetMapping(value = "/filter/type/{type}", produces = "application/json")
-    public ResponseEntity<Object> getIngredientsByType(@PathVariable Type type) {
+    public ResponseEntity<Object> findIngredientsByType(@PathVariable Type type) {
         List<Ingredient> type_filtered_ingredients = ingredientsService.getIngredientsByType(type);
 
         if (type_filtered_ingredients.isEmpty())
             return new ResponseEntity<>("no ingredients found with given Type", HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>(type_filtered_ingredients, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete/id/{id}", produces = "application/json")
+    public ResponseEntity<Object> deleteIngredientById(@PathVariable String id) {
+        try {
+            ingredientsService.deleteIngredient(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IngredientNotFoundException e) {
+            return new ResponseEntity<>("ingredient not found", HttpStatus.NOT_FOUND);
+        }
     }
 }

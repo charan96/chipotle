@@ -53,8 +53,8 @@ public class OrderService {
         List<Ingredient> ingredients = new ArrayList<>();
 
         for (Long id : ids) {
-            if (ingredientsService.getIngredientById(id).isPresent())
-                ingredients.add(ingredientsService.getIngredientById(id).get());
+            if (ingredientsService.getIngredientById(id.toString()).isPresent())
+                ingredients.add(ingredientsService.getIngredientById(id.toString()).get());
             else
                 throw new IngredientNotFoundException("ingredient ID doesn't exist");
         }
