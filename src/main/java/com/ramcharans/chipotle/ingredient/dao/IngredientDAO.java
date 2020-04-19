@@ -22,13 +22,11 @@ public class IngredientDAO {
         return mongoTemplate.findAll(Ingredient.class);
     }
 
-    public String safeAddIngredient(Ingredient ingredient) throws IngredientAlreadyExistsException {
+    public void safeAddIngredient(Ingredient ingredient) throws IngredientAlreadyExistsException {
         if (isIngredientAlreadyExists(ingredient))
             throw new IngredientAlreadyExistsException();
         else
             addIngredient(ingredient);
-
-        return findByName(ingredient.getName()).get().getId();
     }
 
     private boolean isIngredientAlreadyExists(Ingredient ingredient) {
@@ -48,10 +46,6 @@ public class IngredientDAO {
         query.addCriteria(Criteria.where("id").is(id));
 
         mongoTemplate.remove(query, Ingredient.class);
-    }
-
-    public void deleteIngredient(Ingredient ingredient) throws IngredientNotFoundException {
-        deleteIngredient(ingredient.getId());
     }
 
     public Optional<Ingredient> findById(String id) {
@@ -76,5 +70,4 @@ public class IngredientDAO {
         Ingredient ing = mongoTemplate.findOne(query, Ingredient.class);
         return Optional.ofNullable(ing);
     }
-
 }

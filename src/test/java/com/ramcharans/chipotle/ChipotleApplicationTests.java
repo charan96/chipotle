@@ -1,13 +1,16 @@
 package com.ramcharans.chipotle;
 
-import org.junit.jupiter.api.Test;
+import com.ramcharans.chipotle.ingredient.controller.IngredientControllerTest;
+import com.ramcharans.chipotle.ingredient.dao.IngredientDAOTest;
+import com.ramcharans.chipotle.ingredient.service.IngredientServiceTest;
+import org.junit.runner.JUnitCore;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class ChipotleApplicationTests {
 
-    @Test
-    void contextLoads() {
+    public static void main(String[] args) {
+
     }
 
 }

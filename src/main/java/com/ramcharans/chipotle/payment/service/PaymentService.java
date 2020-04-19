@@ -40,7 +40,7 @@ public class PaymentService {
     public Order processAndSavePayment(Order order, Type paymentType, Map<String, String> paymentDetails) throws
             InvalidPaymentDetailsException, PaymentTransactionFailedException {
         Order updatedOrder = processPayment(order, paymentType, paymentDetails);
-        savePayment(updatedOrder.getPayment());
+        // savePayment(updatedOrder.getPayment());
 
         return updatedOrder;
     }
@@ -61,8 +61,8 @@ public class PaymentService {
             paymentTransactionService.processTransaction(paymentDetails);
             payment.setIsSuccess(true);
 
-            order.setPayment(payment);
-            order.setPaid(true);
+            // order.setPayment(payment);
+            order.setFulfilled(false);
 
             return order;
         } catch (InvalidPaymentDetailsException e) {

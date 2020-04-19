@@ -25,8 +25,8 @@ public class IngredientsService {
     public String addIngredient(Ingredient ingredient) throws FailedToAddIngredientException,
             IngredientAlreadyExistsException {
         try {
-            String newIngredientId = ingredientsDAO.safeAddIngredient(ingredient);
-            return newIngredientId;
+            ingredientsDAO.safeAddIngredient(ingredient);
+            return ingredientsDAO.findByName(ingredient.getName()).get().getId();
         } catch (IngredientAlreadyExistsException e) {
             throw e;
         } catch (Exception e) {
@@ -40,8 +40,8 @@ public class IngredientsService {
         // note: essentially doing transaction here; if any of the ingredients exist, none of them are added
         for (Ingredient ing : ingredients) {
             if (ingredientsDAO.findById(ing.getId()).isPresent())
-                throw new IngredientAlreadyExistsException(MessageFormat.format("Ingredient {0} already exists; none " +
-                        "of the provided ingredients were added", ing));
+                throw new IngredientAlreadyExistsException(MessageFormat.format(
+                        "Ingredient {0} already exists; none of the provided ingredients were added", ing));
         }
 
         try {
@@ -62,9 +62,5 @@ public class IngredientsService {
 
     public void deleteIngredient(String id) throws IngredientNotFoundException {
         ingredientsDAO.deleteIngredient(id);
-    }
-
-    public void deleteIngredient(Ingredient ingredient) throws IngredientNotFoundException {
-        ingredientsDAO.deleteIngredient(ingredient);
     }
 }

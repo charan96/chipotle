@@ -7,7 +7,7 @@ public class Payment {
     public static enum Type {CREDIT_CARD, CASH, CHECK, GIFT_CARD}
 
     private String id;
-    private Long orderId;
+    private String orderId;
 
     private Type type;
     private Double amount;

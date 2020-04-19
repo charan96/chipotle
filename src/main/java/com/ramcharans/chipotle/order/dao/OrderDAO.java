@@ -1,29 +1,48 @@
 package com.ramcharans.chipotle.order.dao;
 
 import com.ramcharans.chipotle.order.model.Order;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class OrderDAO {
-    private List<Order> orders = new ArrayList<>();
+    @Autowired
+    MongoTemplate mongoTemplate;
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<Order> getAllOrders() {
+        return mongoTemplate.findAll(Order.class);
     }
 
-    public void addOrder(Order order) {
-        orders.add(order);
+    public String saveOrder(Order order) {
+        // NOTE: mongoTemplate updates the ID instance variable the newly created ID in the order object when save is called
+        mongoTemplate.save(order);
+        return order.getId();
     }
 
-    public Optional<Order> findOrderById(Long id) {
-        return orders.stream()
-                .filter(order -> order.getId().equals(id))
-                .findAny();
+    public Optional<Order> findById(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+
+        return Optional.ofNullable(mongoTemplate.findOne(query, Order.class));
     }
 
+    public List<Order> findByIsFulfilled(boolean value) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isFulfilled").is(value));
+
+        return mongoTemplate.find(query, Order.class);
+    }
+
+    public List<Order> findByCustomerId(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("customerId").is(id));
+
+        return mongoTemplate.find(query, Order.class);
+    }
 }

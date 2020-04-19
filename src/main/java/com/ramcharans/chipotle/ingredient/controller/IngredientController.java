@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class IngredientController {
     public ResponseEntity<Object> addIngredient(@RequestBody Ingredient ingredient) {
         try {
             String ingredientId = ingredientsService.addIngredient(ingredient);
-            return new ResponseEntity<>(ingredientId, HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("new_ingredient_id", ingredientId), HttpStatus.OK);
         } catch (IngredientAlreadyExistsException e) {
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
         } catch (FailedToAddIngredientException e) {
@@ -40,9 +41,7 @@ public class IngredientController {
     @PostMapping(value = "/addMany", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> addIngredients(@RequestBody List<Ingredient> ingredients) {
         try {
-            for (Ingredient ingredient : ingredients)
-                ingredientsService.addIngredient(ingredient);
-
+            ingredientsService.addAllIngredients(ingredients);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FailedToAddIngredientException e) {
             return new ResponseEntity<>("failed to add ingredients", HttpStatus.INTERNAL_SERVER_ERROR);
