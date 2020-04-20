@@ -6,6 +6,8 @@ import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.model.Ingredient.Type;
 import com.ramcharans.chipotle.ingredient.service.IngredientService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@Api(value = "Ingredient Management System")
 @RequestMapping(path = "/ingredients")
 public class IngredientController {
     @Autowired
@@ -25,19 +29,21 @@ public class IngredientController {
 
     private static final Logger log = LoggerFactory.getLogger(IngredientController.class);
 
+    @ApiOperation(value = "Get all available ingredients", response = Ingredient.class, responseContainer = "List")
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<Object> getAvailableIngredients() {
         log.info("retrieving available ingredients using IngredientService");
         return new ResponseEntity<>(ingredientService.getAvailableIngredients(), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "add 1 ingredient", response = String.class)
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     // TODO: change ingredient to ingredient Request
     public ResponseEntity<Object> addIngredient(@RequestBody Ingredient ingredient) {
         try {
             String ingredientId = ingredientService.addIngredient(ingredient);
             log.info("successfully added Ingredient: {}", ingredient);
-            return new ResponseEntity<>(Collections.singletonMap("new_ingredient_id", ingredientId), HttpStatus.OK);
+            return new ResponseEntity<>(ingredientId, HttpStatus.OK);
         } catch (IngredientAlreadyExistsException e) {
             log.info("ingredient already exists: {}", ingredient);
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
@@ -47,6 +53,7 @@ public class IngredientController {
         }
     }
 
+    @ApiOperation(value = "add mulitple ingredients")
     @PostMapping(value = "/addMany", consumes = "application/json", produces = "application/json")
     // TODO: change List<Ingredient> to List<IngredientRequest>
     public ResponseEntity<Object> addIngredients(@RequestBody List<Ingredient> ingredients) {
@@ -63,6 +70,7 @@ public class IngredientController {
         }
     }
 
+    @ApiOperation(value = "find ingredient by ID", response = Ingredient.class)
     @GetMapping(value = "/filter/id/{id}", produces = "application/json")
     public ResponseEntity<Object> findIngredientById(@PathVariable String id) {
         Optional<Ingredient> ingredient = ingredientService.getIngredientById(id);
@@ -76,6 +84,7 @@ public class IngredientController {
         }
     }
 
+    @ApiOperation(value = "find ingredient by Type", response = Ingredient.class, responseContainer = "List")
     @GetMapping(value = "/filter/type/{type}", produces = "application/json")
     public ResponseEntity<Object> findIngredientsByType(@PathVariable Type type) {
         List<Ingredient> type_filtered_ingredients = ingredientService.getIngredientsByType(type);
@@ -89,6 +98,7 @@ public class IngredientController {
         }
     }
 
+    @ApiOperation(value = "delete ingredient by ID")
     @DeleteMapping(value = "/delete/id/{id}", produces = "application/json")
     public ResponseEntity<Object> deleteIngredientById(@PathVariable String id) {
         try {

@@ -4,7 +4,8 @@ import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.order.service.OrderService;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+@Api(value = "Order Management System")
 @RequestMapping(path = "/order")
 public class OrderController {
     @Autowired
@@ -24,11 +26,13 @@ public class OrderController {
 
     public static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
+    @ApiOperation(value = "get all orders", response = Order.class, responseContainer = "List")
     @GetMapping(path = "/", produces = "application/json")
     public ResponseEntity<Object> getAllOrders() {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "submit the Order", response = OrderResponse.class)
     @PostMapping(path = "/submit", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> submitOrder(@RequestBody OrderRequest orderRequest) {
         try {
@@ -39,6 +43,7 @@ public class OrderController {
         }
     }
 
+    @ApiOperation(value = "find order by ID", response = Order.class)
     @GetMapping(path = "/find/id", produces = "application/json")
     public ResponseEntity<Object> findOrderById(@RequestParam String id) {
         try {
@@ -49,6 +54,8 @@ public class OrderController {
         }
     }
 
+    @ApiOperation(value = "get a list of all fulfilled/unfulfilled (based on argument) orders", response =
+            Order.class, responseContainer = "List")
     @GetMapping(path = "/find/fulfilled", produces = "application/json")
     public ResponseEntity<Object> findOrderByIsFulfilled(@RequestParam boolean fulfilled) {
         List<Order> orders = orderService.findOrdersByIsFulfilled(fulfilled);

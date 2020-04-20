@@ -6,6 +6,8 @@ import com.ramcharans.chipotle.transaction.exceptions.PaymentTransactionFailedEx
 import com.ramcharans.chipotle.payment.exceptions.PaymentNotFoundException;
 import com.ramcharans.chipotle.payment.model.Payment;
 import com.ramcharans.chipotle.payment.service.PaymentService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.MessageFormat;
 
 @RestController
+@Api(value = "Payment Management System")
 @RequestMapping("/payment")
 public class PaymentController {
     @Autowired
@@ -23,6 +26,7 @@ public class PaymentController {
 
     public static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
+    @ApiOperation(value = "process the payment based on information provided", response = Payment.class)
     @PostMapping(value = "/process", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> processPayment(@RequestBody PaymentRequest paymentRequest) {
         try {
@@ -40,6 +44,7 @@ public class PaymentController {
         }
     }
 
+    @ApiOperation(value = "find a payment with given ID", response = Payment.class)
     @GetMapping(value = "/find", produces = "application/json")
     public ResponseEntity<Object> findPaymentById(@RequestParam String id) {
         try {
