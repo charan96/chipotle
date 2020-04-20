@@ -4,9 +4,10 @@ import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.transaction.exceptions.InvalidPaymentDetailsException;
 import com.ramcharans.chipotle.transaction.exceptions.PaymentTransactionFailedException;
 import com.ramcharans.chipotle.payment.exceptions.PaymentNotFoundException;
-import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.payment.model.Payment;
 import com.ramcharans.chipotle.payment.service.PaymentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,15 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
+    public static final Logger log = LoggerFactory.getLogger(PaymentController.class);
+
     @PostMapping(value = "/process", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> processPayment(@RequestBody PaymentRequest paymentRequest) {
         try {
-            Order order = paymentService.processAndSavePayment(paymentRequest.getOrderId(),
+            Payment payment = paymentService.processAndSavePayment(paymentRequest.getOrderId(),
                     paymentRequest.getPaymentType(), paymentRequest.getPaymentDetails());
 
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            return new ResponseEntity<>(payment, HttpStatus.OK);
         } catch (InvalidPaymentDetailsException e) {
             return new ResponseEntity<>("invalid payment details for payment processing", HttpStatus.BAD_REQUEST);
         } catch (PaymentTransactionFailedException e) {

@@ -3,6 +3,8 @@ package com.ramcharans.chipotle.ingredient.dao;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientAlreadyExistsException;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,9 +16,10 @@ import java.util.Optional;
 
 @Repository
 public class IngredientDAO {
-
     @Autowired
     private MongoTemplate mongoTemplate;        // built automatically by Spring after reading application.properties
+
+    private static final Logger log = LoggerFactory.getLogger(IngredientDAO.class);
 
     public List<Ingredient> getAllIngredients() {
         return mongoTemplate.findAll(Ingredient.class);

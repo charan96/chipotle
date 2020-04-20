@@ -11,7 +11,7 @@ import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.exceptions.FailedToAddIngredientException;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientAlreadyExistsException;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
-import com.ramcharans.chipotle.ingredient.service.IngredientsService;
+import com.ramcharans.chipotle.ingredient.service.IngredientService;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,7 +33,7 @@ public class IngredientControllerTest {
     MockMvc mockMvc;
 
     @Mock
-    IngredientsService ingredientsService;
+    IngredientService ingredientService;
 
     @MockBean
     IngredientController ingredientController;
@@ -41,7 +41,7 @@ public class IngredientControllerTest {
     @Before
     public void setup() {
         ingredientController = new IngredientController();
-        ingredientController.ingredientsService = ingredientsService;
+        ingredientController.ingredientService = ingredientService;
 
         mockMvc = MockMvcBuilders.standaloneSetup(ingredientController).build();
     }
@@ -58,7 +58,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0), new Ingredient(
                 "rice2", Ingredient.Type.RICE, 0.0));
 
-        when(ingredientsService.getAvailableIngredients()).thenReturn(ings);
+        when(ingredientService.getAvailableIngredients()).thenReturn(ings);
 
         mockMvc.perform(get("/ingredients")
                 .contentType("application/json"))
@@ -74,14 +74,14 @@ public class IngredientControllerTest {
                 .contentType("application/json"))
                 .andExpect(status().isOk());
 
-        verify(ingredientsService).getAvailableIngredients();
+        verify(ingredientService).getAvailableIngredients();
     }
 
     @Test
     public void testAddIngredientThrowsExceptionWhenServiceThrowsException() throws Exception {
         Ingredient ing = mock(Ingredient.class);
 
-        when(ingredientsService.addIngredient(ing)).thenThrow(IngredientAlreadyExistsException.class);
+        when(ingredientService.addIngredient(ing)).thenThrow(IngredientAlreadyExistsException.class);
 
         mockMvc.perform(post("/ingredients/add")
                 .contentType("application/json"))
@@ -93,7 +93,7 @@ public class IngredientControllerTest {
     public void testAddIngredientReturnsStringIdAndOkStatus() throws Exception {
         Ingredient ing = new Ingredient("rice1", Ingredient.Type.RICE, 0.0);
 
-        when(ingredientsService.addIngredient(ing)).thenReturn("newid");
+        when(ingredientService.addIngredient(ing)).thenReturn("newid");
 
         mockMvc.perform(post("/ingredients/add")
                 .contentType("application/json")
@@ -106,7 +106,7 @@ public class IngredientControllerTest {
     public void testAddIngredientReturnsInternalServerError() throws Exception {
         Ingredient ing = new Ingredient("rice1", Ingredient.Type.RICE, 0.0);
 
-        when(ingredientsService.addIngredient(ing)).thenThrow(FailedToAddIngredientException.class);
+        when(ingredientService.addIngredient(ing)).thenThrow(FailedToAddIngredientException.class);
 
         mockMvc.perform(post("/ingredients/add")
                 .contentType("application/json")
@@ -119,7 +119,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
                 new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doNothing().when(ingredientsService).addAllIngredients(ings);
+        doNothing().when(ingredientService).addAllIngredients(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
                 .contentType("application/json")
@@ -132,7 +132,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
                 new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doThrow(IngredientAlreadyExistsException.class).when(ingredientsService).addAllIngredients(ings);
+        doThrow(IngredientAlreadyExistsException.class).when(ingredientService).addAllIngredients(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
                 .contentType("application/json").content(new ObjectMapper().writeValueAsString(ings)))
@@ -144,7 +144,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
                 new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doThrow(FailedToAddIngredientException.class).when(ingredientsService).addAllIngredients(ings);
+        doThrow(FailedToAddIngredientException.class).when(ingredientService).addAllIngredients(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
                 .contentType("application/json").content(new ObjectMapper().writeValueAsString(ings)))
@@ -153,7 +153,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testFindIngredientByIdReturnsNotFoundWhenIngredientNotAvailable() throws Exception {
-        when(ingredientsService.getIngredientById("id1")).thenReturn(Optional.empty());
+        when(ingredientService.getIngredientById("id1")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/ingredients/filter/id/id1")
                 .contentType("application/json"))
@@ -162,7 +162,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testFindIngredientByIdReturnsRightValueWhenIdExists() throws Exception {
-        when(ingredientsService.getIngredientById("id1")).thenReturn(Optional.of(
+        when(ingredientService.getIngredientById("id1")).thenReturn(Optional.of(
                 new Ingredient("rice1", Ingredient.Type.RICE, 0.0)));
 
         mockMvc.perform(get("/ingredients/filter/id/id1")
@@ -173,7 +173,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testFindByTypeReturnsNotFoundIfNoIngredientsOfTypeFound() throws Exception {
-        when(ingredientsService.getIngredientsByType(Ingredient.Type.BEANS)).thenReturn(Collections.emptyList());
+        when(ingredientService.getIngredientsByType(Ingredient.Type.BEANS)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/ingredients/filter/type/BEANS")
                 .contentType("application/json"))
@@ -185,7 +185,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
                 new Ingredient("rice2", Ingredient.Type.RICE, 0.0));
 
-        when(ingredientsService.getIngredientsByType(Ingredient.Type.BEANS)).thenReturn(ings);
+        when(ingredientService.getIngredientsByType(Ingredient.Type.BEANS)).thenReturn(ings);
 
         mockMvc.perform(get("/ingredients/filter/type/BEANS")
                 .contentType("application/json"))
@@ -195,7 +195,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testDeleteIngredientFailsWhenIdIsNotFound() throws Exception {
-        doThrow(IngredientNotFoundException.class).when(ingredientsService).deleteIngredient("id1");
+        doThrow(IngredientNotFoundException.class).when(ingredientService).deleteIngredient("id1");
 
         mockMvc.perform(delete("/ingredients/delete/id/id1")
                 .contentType("application/json"))
@@ -204,7 +204,7 @@ public class IngredientControllerTest {
 
     @Test
     public void testDeleteIngredientReturnsOkWhenIdExists() throws Exception {
-        doNothing().when(ingredientsService).deleteIngredient("id1");
+        doNothing().when(ingredientService).deleteIngredient("id1");
 
         mockMvc.perform(delete("/ingredients/delete/id/id1")
                 .contentType("application/json"))

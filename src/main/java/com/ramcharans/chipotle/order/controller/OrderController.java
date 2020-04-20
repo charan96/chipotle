@@ -5,6 +5,8 @@ import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.order.service.OrderService;
 import jdk.nashorn.internal.objects.annotations.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.List;
 public class OrderController {
     @Autowired
     OrderService orderService;
+
+    public static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
     @GetMapping(path = "/", produces = "application/json")
     public ResponseEntity<Object> getAllOrders() {

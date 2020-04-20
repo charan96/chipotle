@@ -2,12 +2,11 @@ package com.ramcharans.chipotle.order.service;
 
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
-import com.ramcharans.chipotle.ingredient.service.IngredientsService;
+import com.ramcharans.chipotle.ingredient.service.IngredientService;
 import com.ramcharans.chipotle.order.dao.OrderDAO;
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,7 +25,7 @@ public class OrderServiceTest {
     OrderDAO orderDAO;
 
     @Mock
-    IngredientsService ingredientsService;
+    IngredientService ingredientService;
 
     @InjectMocks
     OrderService orderService;
@@ -52,7 +51,7 @@ public class OrderServiceTest {
 
     @Test(expected = IngredientNotFoundException.class)
     public void testBuildOrderThrowsExceptionWhenIngredientsAreNotValidated() throws IngredientNotFoundException {
-        when(ingredientsService.getIngredientById(anyString())).thenReturn(Optional.empty());
+        when(ingredientService.getIngredientById(anyString())).thenReturn(Optional.empty());
 
         spy.buildOrder("id1", Arrays.asList("ing1", "ing2"));
     }
@@ -98,7 +97,7 @@ public class OrderServiceTest {
     @Test(expected = IngredientNotFoundException.class)
     public void testGetIngredientsListFromIngredientsIdsThrowsExceptionWhenIngredientIdDoesNotExist()
             throws IngredientNotFoundException {
-        when(ingredientsService.getIngredientById(anyString())).thenReturn(Optional.empty());
+        when(ingredientService.getIngredientById(anyString())).thenReturn(Optional.empty());
 
         spy.getIngredientsListFromIngredientIds(Arrays.asList("id1", "id2"));
     }
@@ -108,8 +107,8 @@ public class OrderServiceTest {
         Ingredient ing1 = mock(Ingredient.class);
         Ingredient ing2 = mock(Ingredient.class);
 
-        when(ingredientsService.getIngredientById("id1")).thenReturn(Optional.of(ing1));
-        when(ingredientsService.getIngredientById("id2")).thenReturn(Optional.of(ing2));
+        when(ingredientService.getIngredientById("id1")).thenReturn(Optional.of(ing1));
+        when(ingredientService.getIngredientById("id2")).thenReturn(Optional.of(ing2));
 
         List<Ingredient> ings = spy.getIngredientsListFromIngredientIds(Arrays.asList("id1", "id2"));
 

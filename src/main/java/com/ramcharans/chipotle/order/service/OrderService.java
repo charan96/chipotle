@@ -2,10 +2,12 @@ package com.ramcharans.chipotle.order.service;
 
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.order.dao.OrderDAO;
-import com.ramcharans.chipotle.ingredient.service.IngredientsService;
+import com.ramcharans.chipotle.ingredient.service.IngredientService;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     @Autowired
-    IngredientsService ingredientsService;
+    IngredientService ingredientService;
 
     @Autowired
     OrderDAO orderDAO;
+
+    public static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     public Order buildAndSaveOrder(String customerId, List<String> ingredientIds) throws IngredientNotFoundException {
         Order order = buildOrder(customerId, ingredientIds);
@@ -51,7 +55,7 @@ public class OrderService {
 
     private void validateIngredientIds(List<String> ingredientIds) throws IngredientNotFoundException {
         for (String ingredientId : ingredientIds) {
-            if (!ingredientsService.getIngredientById(ingredientId).isPresent())
+            if (!ingredientService.getIngredientById(ingredientId).isPresent())
                 throw new IngredientNotFoundException(MessageFormat.format(
                         "No ingredient found for id: {0}", ingredientId));
         }
@@ -75,14 +79,14 @@ public class OrderService {
     }
 
     public List<Ingredient> getIngredientsListFromIngredientIds(List<String> ingredientIds) throws IngredientNotFoundException {
-        // NOTE: this method currently will only be called after ingredient ID validation has finished in build order;
-        // NOTE contd.: this method throws the exception because if we use it somewhere else, then they'd need to know
-        // NOTE contd.: that the Ingredient may not exist
+        // NOTE: this method currently will only be called after ingredient ID validation has
+        //  finished in build order; this method throws the exception because if we use it somewhere else,
+        //  then they'd need to know that the Ingredient may not exist
 
         List<Ingredient> ingredients = new ArrayList<>();
 
         for (String ingredientId : ingredientIds) {
-            Optional<Ingredient> ing = ingredientsService.getIngredientById(ingredientId);
+            Optional<Ingredient> ing = ingredientService.getIngredientById(ingredientId);
 
             if (ing.isPresent())
                 ingredients.add(ing.get());
@@ -95,7 +99,7 @@ public class OrderService {
     }
 
     private Double calculateOrderTotal(Order order) throws IngredientNotFoundException {
-        Double minMeatPrice = Collections.min(ingredientsService.getIngredientsByType(Ingredient.Type.MEAT)
+        Double minMeatPrice = Collections.min(ingredientService.getIngredientsByType(Ingredient.Type.MEAT)
                 .stream()
                 .map(Ingredient::getPrice)
                 .collect(Collectors.toList()));

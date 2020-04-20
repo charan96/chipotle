@@ -6,6 +6,8 @@ import com.ramcharans.chipotle.ingredient.exceptions.IngredientAlreadyExistsExce
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
 import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.model.Ingredient.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class IngredientsService {
+public class IngredientService {
     @Autowired
     IngredientDAO ingredientsDAO;
+
+    private static final Logger log = LoggerFactory.getLogger(IngredientService.class);
 
     public List<Ingredient> getAvailableIngredients() {
         return ingredientsDAO.getAllIngredients();

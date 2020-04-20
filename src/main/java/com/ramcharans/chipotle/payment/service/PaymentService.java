@@ -10,6 +10,8 @@ import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.payment.model.Payment;
 import com.ramcharans.chipotle.payment.model.Payment.Type;
 import com.ramcharans.chipotle.transaction.service.PaymentTransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -42,15 +44,17 @@ public class PaymentService {
     @Qualifier("creditCardPayment")
     PaymentTransactionService creditCardPaymentTransactionService;
 
-    public Order processAndSavePayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
-            InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {
-        Order updatedOrder = processPayment(orderId, paymentType, paymentDetails);
-        savePayment(updatedOrder.getPayment());
+    public static final Logger log = LoggerFactory.getLogger(PaymentService.class);
 
-        return updatedOrder;
+    public Payment processAndSavePayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
+            InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {
+        Payment payment = processPayment(orderId, paymentType, paymentDetails);
+        savePayment(payment);
+
+        return payment;
     }
 
-    public Order processPayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
+    public Payment processPayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
             InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {
 
         Order order = orderService.findOrder(orderId);
@@ -64,7 +68,6 @@ public class PaymentService {
         payment.setOrderId(orderId);
         payment.setAmount(order.getTotal());
 
-
         try {
             paymentTransactionService.processTransaction(paymentDetails);
             payment.setIsSuccess(true);
@@ -73,7 +76,7 @@ public class PaymentService {
             order.setFulfilled(false);
 
             orderService.saveOrder(order);
-            return order;
+            return payment;
         } catch (InvalidPaymentDetailsException e) {
             throw e;
         } catch (Exception e) {

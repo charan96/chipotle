@@ -1,6 +1,7 @@
 package com.ramcharans.chipotle.payment.controller;
 
 import com.ramcharans.chipotle.payment.model.Payment;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;

@@ -102,7 +102,7 @@ public class PaymentControllerTest {
     @Test
     public void testProcessPaymentReturnOkStatusForValidInput() throws Exception {
         when(paymentService.processAndSavePayment(anyString(), eq(Payment.Type.CREDIT_CARD),
-                eq(Collections.emptyMap()))).thenReturn(new Order());
+                eq(Collections.emptyMap()))).thenReturn(new Payment());
 
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setOrderId("id1");

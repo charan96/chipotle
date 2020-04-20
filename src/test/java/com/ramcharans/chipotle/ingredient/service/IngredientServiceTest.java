@@ -27,16 +27,16 @@ public class IngredientServiceTest {
     private IngredientDAO ingredientDAO;
 
     @InjectMocks
-    private IngredientsService ingredientsService;
+    private IngredientService ingredientService;
 
     @BeforeEach
     public void init() {
-        ingredientsService = new IngredientsService();
+        ingredientService = new IngredientService();
     }
 
     @Test
     public void testIngredientsDAOIsNotNull() {
-        assertNotNull(ingredientsService.ingredientsDAO);
+        assertNotNull(ingredientService.ingredientsDAO);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class IngredientServiceTest {
 
         when(ingredientDAO.getAllIngredients()).thenReturn(ings);
 
-        assertEquals(ings, ingredientsService.getAvailableIngredients());
+        assertEquals(ings, ingredientService.getAvailableIngredients());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class IngredientServiceTest {
         doNothing().when(ingredientDAO).safeAddIngredient(ing);
         when(ingredientDAO.findByName("rice1")).thenReturn(Optional.of(ing));
 
-        ingredientsService.addIngredient(ing);
+        ingredientService.addIngredient(ing);
     }
 
     @Test(expected = IngredientAlreadyExistsException.class)
@@ -68,7 +68,7 @@ public class IngredientServiceTest {
         Ingredient ing = mock(Ingredient.class);
 
         doThrow(IngredientAlreadyExistsException.class).when(ingredientDAO).safeAddIngredient(ing);
-        ingredientsService.addIngredient(ing);
+        ingredientService.addIngredient(ing);
     }
 
     @Test(expected = FailedToAddIngredientException.class)
@@ -77,7 +77,7 @@ public class IngredientServiceTest {
         Ingredient ing = mock(Ingredient.class);
 
         doThrow(MongoClientException.class).when(ingredientDAO).safeAddIngredient(ing);
-        ingredientsService.addIngredient(ing);
+        ingredientService.addIngredient(ing);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class IngredientServiceTest {
 
         when(ingredientDAO.findById("1")).thenReturn(java.util.Optional.ofNullable(ings.get(1)));
 
-        assertEquals(ingredientsService.getIngredientById("1").get(), ings.get(1));
+        assertEquals(ingredientService.getIngredientById("1").get(), ings.get(1));
     }
 
     @Test(expected = IngredientAlreadyExistsException.class)
@@ -106,7 +106,7 @@ public class IngredientServiceTest {
 
         when(ingredientDAO.findById("2")).thenReturn(Optional.of(mock(Ingredient.class)));
 
-        ingredientsService.addAllIngredients(ings);
+        ingredientService.addAllIngredients(ings);
     }
 
     @Test(expected = FailedToAddIngredientException.class)
@@ -121,6 +121,6 @@ public class IngredientServiceTest {
 
         doThrow(MongoClientException.class).when(ingredientDAO).addIngredient(ings.get(2));
 
-        ingredientsService.addAllIngredients(ings);
+        ingredientService.addAllIngredients(ings);
     }
 }

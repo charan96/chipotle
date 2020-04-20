@@ -1,6 +1,8 @@
 package com.ramcharans.chipotle.transaction.service;
 
 import com.ramcharans.chipotle.transaction.exceptions.InvalidPaymentDetailsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Random;
 @Qualifier("creditCardPayment")
 public class CreditCardPaymentTransactionService implements PaymentTransactionService {
     private final List<String> requiredPaymentTransactionDetails = Arrays.asList("cc-num", "cc-pin", "cc-exp");
+
+    public static final Logger log = LoggerFactory.getLogger(CreditCardPaymentTransactionService.class);
 
     @Override
     public String createId() {

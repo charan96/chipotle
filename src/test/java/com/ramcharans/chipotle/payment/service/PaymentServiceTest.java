@@ -120,11 +120,13 @@ public class PaymentServiceTest {
     public void testProcessPaymentReturnsCorrectValue() throws OrderNotFoundException, InvalidPaymentDetailsException,
             PaymentTransactionFailedException {
         Order order = mock(Order.class);
+        Payment payment = mock(Payment.class);
         when(orderService.findOrder("id1")).thenReturn(order);
 
         doReturn(cc).when(spy).getPaymentTransactionServiceByType(Payment.Type.CREDIT_CARD);
 
-        assert spy.processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4", "id5")).equals(order);
+        assertThat(spy.processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4", "id5")),
+                instanceOf(Payment.class));
     }
 
     @Test
@@ -133,9 +135,9 @@ public class PaymentServiceTest {
         Order order = mock(Order.class);
         Payment payment = mock(Payment.class);
 
-        when(order.getPayment()).thenReturn(payment);
+        // when(order.getPayment()).thenReturn(payment);
 
-        doReturn(order).when(spy).processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4",
+        doReturn(payment).when(spy).processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4",
                 "id5"));
         doNothing().when(spy).savePayment(payment);
 
@@ -150,9 +152,9 @@ public class PaymentServiceTest {
         Order order = mock(Order.class);
         Payment payment = mock(Payment.class);
 
-        when(order.getPayment()).thenReturn(payment);
+        // when(order.getPayment()).thenReturn(payment);
 
-        doReturn(order).when(spy).processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4",
+        doReturn(payment).when(spy).processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4",
                 "id5"));
         doNothing().when(spy).savePayment(payment);
 
