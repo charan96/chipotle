@@ -32,6 +32,7 @@ public class IngredientController {
     }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
+    // TODO: change ingredient to ingredient Request
     public ResponseEntity<Object> addIngredient(@RequestBody Ingredient ingredient) {
         try {
             String ingredientId = ingredientService.addIngredient(ingredient);
@@ -47,6 +48,7 @@ public class IngredientController {
     }
 
     @PostMapping(value = "/addMany", consumes = "application/json", produces = "application/json")
+    // TODO: change List<Ingredient> to List<IngredientRequest>
     public ResponseEntity<Object> addIngredients(@RequestBody List<Ingredient> ingredients) {
         try {
             ingredientService.addAllIngredients(ingredients);
