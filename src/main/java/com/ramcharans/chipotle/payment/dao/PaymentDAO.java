@@ -1,24 +1,27 @@
 package com.ramcharans.chipotle.payment.dao;
 
 import com.ramcharans.chipotle.payment.model.Payment;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class PaymentDAO {
-    private List<Payment> payments = new ArrayList<>();
+    @Autowired
+    MongoTemplate mongoTemplate;
 
     public void savePaymentToDB(Payment payment) {
-        payments.add(payment);
-        System.out.println("payment saved to DB");
+        mongoTemplate.save(payment);
     }
 
     public Optional<Payment> getPaymentById(String id) {
-        return payments.stream()
-                .filter(payment -> payment.getId().equals(id))
-                .findAny();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+
+        return Optional.ofNullable(mongoTemplate.findOne(query, Payment.class));
     }
 }

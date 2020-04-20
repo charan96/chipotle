@@ -1,5 +1,7 @@
 package com.ramcharans.chipotle.payment.service;
 
+import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
+import com.ramcharans.chipotle.order.service.OrderService;
 import com.ramcharans.chipotle.payment.dao.PaymentDAO;
 import com.ramcharans.chipotle.transaction.exceptions.InvalidPaymentDetailsException;
 import com.ramcharans.chipotle.transaction.exceptions.PaymentTransactionFailedException;
@@ -22,6 +24,9 @@ public class PaymentService {
     PaymentDAO paymentDAO;
 
     @Autowired
+    OrderService orderService;
+
+    @Autowired
     @Qualifier("cashPayment")
     PaymentTransactionService cashPaymentTransactionService;
 
@@ -37,16 +42,18 @@ public class PaymentService {
     @Qualifier("creditCardPayment")
     PaymentTransactionService creditCardPaymentTransactionService;
 
-    public Order processAndSavePayment(Order order, Type paymentType, Map<String, String> paymentDetails) throws
-            InvalidPaymentDetailsException, PaymentTransactionFailedException {
-        Order updatedOrder = processPayment(order, paymentType, paymentDetails);
-        // savePayment(updatedOrder.getPayment());
+    public Order processAndSavePayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
+            InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {
+        Order updatedOrder = processPayment(orderId, paymentType, paymentDetails);
+        savePayment(updatedOrder.getPayment());
 
         return updatedOrder;
     }
 
-    public Order processPayment(Order order, Type paymentType, Map<String, String> paymentDetails) throws
-            InvalidPaymentDetailsException, PaymentTransactionFailedException {
+    public Order processPayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
+            InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {
+
+        Order order = orderService.findOrder(orderId);
 
         PaymentTransactionService paymentTransactionService = getPaymentTransactionServiceByType(paymentType);
 
@@ -54,16 +61,18 @@ public class PaymentService {
 
         payment.setId(paymentTransactionService.createId());
         payment.setType(paymentType);
-        payment.setOrderId(order.getId());
+        payment.setOrderId(orderId);
         payment.setAmount(order.getTotal());
+
 
         try {
             paymentTransactionService.processTransaction(paymentDetails);
             payment.setIsSuccess(true);
 
-            // order.setPayment(payment);
+            order.setPayment(payment);
             order.setFulfilled(false);
 
+            orderService.saveOrder(order);
             return order;
         } catch (InvalidPaymentDetailsException e) {
             throw e;
@@ -86,7 +95,7 @@ public class PaymentService {
             throw new PaymentNotFoundException("Payment not found with id: " + paymentId);
     }
 
-    private PaymentTransactionService getPaymentTransactionServiceByType(Type paymentType) {
+    protected PaymentTransactionService getPaymentTransactionServiceByType(Type paymentType) {
         // FIXME: need to make this a little better
         EnumMap<Type, PaymentTransactionService> paymentTypeToTransactionServiceMap = new EnumMap<>(Type.class);
 

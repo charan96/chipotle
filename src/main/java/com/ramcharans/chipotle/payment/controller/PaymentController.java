@@ -1,5 +1,6 @@
 package com.ramcharans.chipotle.payment.controller;
 
+import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.transaction.exceptions.InvalidPaymentDetailsException;
 import com.ramcharans.chipotle.transaction.exceptions.PaymentTransactionFailedException;
 import com.ramcharans.chipotle.payment.exceptions.PaymentNotFoundException;
@@ -22,7 +23,7 @@ public class PaymentController {
     @PostMapping(value = "/process", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> processPayment(@RequestBody PaymentRequest paymentRequest) {
         try {
-            Order order = paymentService.processAndSavePayment(paymentRequest.getOrder(),
+            Order order = paymentService.processAndSavePayment(paymentRequest.getOrderId(),
                     paymentRequest.getPaymentType(), paymentRequest.getPaymentDetails());
 
             return new ResponseEntity<>(order, HttpStatus.OK);
@@ -30,6 +31,9 @@ public class PaymentController {
             return new ResponseEntity<>("invalid payment details for payment processing", HttpStatus.BAD_REQUEST);
         } catch (PaymentTransactionFailedException e) {
             return new ResponseEntity<>("payment failed", HttpStatus.BAD_REQUEST);
+        } catch (OrderNotFoundException e) {
+            return new ResponseEntity<>(MessageFormat.format("order with ID '{0}' not found",
+                    paymentRequest.getOrderId()), HttpStatus.NOT_FOUND);
         }
     }
 

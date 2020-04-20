@@ -2,9 +2,7 @@ package com.ramcharans.chipotle.order.controller;
 
 import java.util.*;
 
-import com.ramcharans.chipotle.ingredient.controller.IngredientController;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientNotFoundException;
-import com.ramcharans.chipotle.ingredient.service.IngredientsService;
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.order.service.OrderService;
@@ -21,12 +19,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.collection.IsCollectionWithSize.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -124,5 +119,4 @@ public class OrderControllerTest {
                 .param("fulfilled", "true"))
                 .andExpect(status().isOk());
     }
-
 }
