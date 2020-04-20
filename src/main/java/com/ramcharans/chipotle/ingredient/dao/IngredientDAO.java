@@ -26,10 +26,13 @@ public class IngredientDAO {
     }
 
     public void safeAddIngredient(Ingredient ingredient) throws IngredientAlreadyExistsException {
-        if (isIngredientAlreadyExists(ingredient))
+        if (isIngredientAlreadyExists(ingredient)) {
+            log.info("ingredient '{}' already exists", ingredient);
             throw new IngredientAlreadyExistsException();
-        else
+        } else {
             addIngredient(ingredient);
+            log.info("ingredient '{}' was successfully safe added", ingredient);
+        }
     }
 
     private boolean isIngredientAlreadyExists(Ingredient ingredient) {
@@ -39,16 +42,20 @@ public class IngredientDAO {
 
     public void addIngredient(Ingredient ingredient) {
         mongoTemplate.save(ingredient);
+        log.info("ingredient '{}' successfully added", ingredient);
     }
 
     public void deleteIngredient(String id) throws IngredientNotFoundException {
-        if (!findById(id).isPresent())
+        if (!findById(id).isPresent()) {
+            log.info("ingredient with ID: '{}' was not found for deletion", id);
             throw new IngredientNotFoundException();
+        }
 
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
 
         mongoTemplate.remove(query, Ingredient.class);
+        log.info("successfully removed Ingredient with ID: '{}'", id);
     }
 
     public Optional<Ingredient> findById(String id) {
@@ -56,6 +63,7 @@ public class IngredientDAO {
         query.addCriteria(Criteria.where("id").is(id));
 
         Ingredient ing = mongoTemplate.findOne(query, Ingredient.class);
+        log.info("checking if Ingredient with ID: '{}' exists", id);
         return Optional.ofNullable(ing);
     }
 
@@ -63,6 +71,7 @@ public class IngredientDAO {
         Query query = new Query();
         query.addCriteria(Criteria.where("type").is(type));
 
+        log.info("checking to find Ingredients with type : '{}'", type);
         return mongoTemplate.find(query, Ingredient.class);
     }
 
@@ -70,6 +79,7 @@ public class IngredientDAO {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(name));
 
+        log.info("checking to find Ingredient with name: '{}'", name);
         Ingredient ing = mongoTemplate.findOne(query, Ingredient.class);
         return Optional.ofNullable(ing);
     }

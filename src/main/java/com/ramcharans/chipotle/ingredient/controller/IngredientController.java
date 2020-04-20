@@ -38,10 +38,10 @@ public class IngredientController {
             log.info("successfully added Ingredient: {}", ingredient);
             return new ResponseEntity<>(Collections.singletonMap("new_ingredient_id", ingredientId), HttpStatus.OK);
         } catch (IngredientAlreadyExistsException e) {
-            log.error("ingredient already exists: {}", ingredient);
+            log.info("ingredient already exists: {}", ingredient);
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
         } catch (FailedToAddIngredientException e) {
-            log.error("failed to add ingredient: {}", ingredient);
+            log.info("failed to add ingredient: {}", ingredient);
             return new ResponseEntity<>("failed to add ingredient: ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -53,10 +53,10 @@ public class IngredientController {
             log.info("successfully added ingredients: {}", ingredients);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FailedToAddIngredientException e) {
-            log.error("failed to add ingrediens: {}", ingredients);
+            log.info("failed to add ingrediens: {}", ingredients);
             return new ResponseEntity<>("failed to add ingredients", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IngredientAlreadyExistsException e) {
-            log.error("An ingredient from the following ingredients already exists: {}", ingredients);
+            log.info("An ingredient from the following ingredients already exists: {}", ingredients);
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
         }
     }
