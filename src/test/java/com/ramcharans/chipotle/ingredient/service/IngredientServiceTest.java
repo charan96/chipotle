@@ -31,7 +31,7 @@ public class IngredientServiceTest {
 
     @BeforeEach
     public void init() {
-        ingredientService = new IngredientService();
+        ingredientService = new IngredientService(ingredientDAO);
     }
 
     @Test

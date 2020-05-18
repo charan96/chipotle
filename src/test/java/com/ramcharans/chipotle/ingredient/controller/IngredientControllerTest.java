@@ -41,9 +41,7 @@ public class IngredientControllerTest {
 
     @Before
     public void setup() {
-        ingredientController = new IngredientController();
-        ingredientController.ingredientService = ingredientService;
-
+        ingredientController = new IngredientController(ingredientService);
         mockMvc = MockMvcBuilders.standaloneSetup(ingredientController).build();
     }
 

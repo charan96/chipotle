@@ -9,7 +9,6 @@ import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.ingredient.model.Ingredient.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -19,10 +18,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class IngredientService {
-    @Autowired
     IngredientDAO ingredientsDAO;
 
     private static final Logger log = LoggerFactory.getLogger(IngredientService.class);
+
+    public IngredientService(IngredientDAO ingredientDAO) {
+        this.ingredientsDAO = ingredientDAO;
+    }
 
     public List<Ingredient> getAvailableIngredients() {
         return ingredientsDAO.getAllIngredients();
