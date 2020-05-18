@@ -3,6 +3,7 @@ package com.ramcharans.chipotle.payment.service;
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.service.OrderService;
 import com.ramcharans.chipotle.payment.dao.PaymentDAO;
+import com.ramcharans.chipotle.events.paymentsuccess.PaymentSuccessEventProducer;
 import com.ramcharans.chipotle.transaction.exceptions.InvalidPaymentDetailsException;
 import com.ramcharans.chipotle.transaction.exceptions.PaymentTransactionFailedException;
 import com.ramcharans.chipotle.payment.exceptions.PaymentNotFoundException;
@@ -27,6 +28,9 @@ public class PaymentService {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    PaymentSuccessEventProducer paymentSuccessEventProducer;
 
     @Autowired
     @Qualifier("cashPayment")
@@ -76,11 +80,15 @@ public class PaymentService {
             order.setFulfilled(false);
 
             orderService.saveOrder(order);
+            /* NOTE (EVENT): SENDING PAYMENT EVENT SUCCESS TO ORDER */
+            paymentSuccessEventProducer.send(payment);
             return payment;
         } catch (InvalidPaymentDetailsException e) {
             throw e;
         } catch (Exception e) {
             // FIXME: should catch a more specific exception in real life scenarios
+            log.error(e.getMessage());
+            e.printStackTrace();
             throw new PaymentTransactionFailedException();
         }
     }

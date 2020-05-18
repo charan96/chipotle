@@ -100,13 +100,13 @@ public class IngredientServiceTest {
 
         for (int i = 0; i < 3; i++) {
             Ingredient ing = mock(Ingredient.class);
-            when(ing.getId()).thenReturn(Integer.toString(i));
+            when(ing.getName()).thenReturn("rice" + i);
             ings.add(ing);
         }
 
-        when(ingredientDAO.findById("2")).thenReturn(Optional.of(mock(Ingredient.class)));
+        when(ingredientDAO.findByName("rice1")).thenReturn(Optional.of(mock(Ingredient.class)));
 
-        ingredientService.addAllIngredients(ings);
+        ingredientService.addMulitpleIngredients(ings);
     }
 
     @Test(expected = FailedToAddIngredientException.class)
@@ -115,12 +115,11 @@ public class IngredientServiceTest {
 
         for (int i = 0; i < 3; i++) {
             Ingredient ing = mock(Ingredient.class);
-            when(ing.getId()).thenReturn(Integer.toString(i));
             ings.add(ing);
         }
 
         doThrow(MongoClientException.class).when(ingredientDAO).addIngredient(ings.get(2));
 
-        ingredientService.addAllIngredients(ings);
+        ingredientService.addMulitpleIngredients(ings);
     }
 }

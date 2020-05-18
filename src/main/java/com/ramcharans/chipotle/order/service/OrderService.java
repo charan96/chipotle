@@ -50,6 +50,7 @@ public class OrderService {
     }
 
     public void saveOrder(Order order) {
+        // TODO: replace orderdao with MongoRepository and look at the proxy class generated
         orderDAO.saveOrder(order);
     }
 
@@ -119,5 +120,15 @@ public class OrderService {
                 .reduce(0.0, Double::sum);
 
         return maxOrderMeatPrice + sumOrderExtraPrice;
+    }
+
+    public void markOrderAsFulfilled(String orderId) {
+        try {
+            Order order = findOrder(orderId);
+            order.setFulfilled(true);
+            saveOrder(order);
+        } catch (OrderNotFoundException e) {
+            throw new RuntimeException(MessageFormat.format("Order not found with ID: {0}", orderId));
+        }
     }
 }

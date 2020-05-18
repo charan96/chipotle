@@ -1,5 +1,6 @@
 package com.ramcharans.chipotle.ingredient.service;
 
+import com.ramcharans.chipotle.ingredient.controller.IngredientRequest;
 import com.ramcharans.chipotle.ingredient.dao.IngredientDAO;
 import com.ramcharans.chipotle.ingredient.exceptions.FailedToAddIngredientException;
 import com.ramcharans.chipotle.ingredient.exceptions.IngredientAlreadyExistsException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IngredientService {
@@ -24,6 +26,26 @@ public class IngredientService {
 
     public List<Ingredient> getAvailableIngredients() {
         return ingredientsDAO.getAllIngredients();
+    }
+
+    private Ingredient convertIngredientRequestToIngredient(IngredientRequest ingredientRequest) {
+        return new Ingredient(ingredientRequest.getName(), ingredientRequest.getType(), ingredientRequest.getPrice());
+    }
+
+    private List<Ingredient> convertIngredientRequestListToIngredientList(List<IngredientRequest> ingredientRequests) {
+        return ingredientRequests.stream().map(this::convertIngredientRequestToIngredient).collect(Collectors.toList());
+    }
+
+    public String addIngredientFromIngredientRequest(IngredientRequest ingredientRequest) throws
+            FailedToAddIngredientException, IngredientAlreadyExistsException {
+        Ingredient ingredient = convertIngredientRequestToIngredient(ingredientRequest);
+        return addIngredient(ingredient);
+    }
+
+    public void addMultipleIngredientsFromIngredientRequestList(List<IngredientRequest> ingredientRequests) throws
+            IngredientAlreadyExistsException, FailedToAddIngredientException {
+        List<Ingredient> ingredients = convertIngredientRequestListToIngredientList(ingredientRequests);
+        addMulitpleIngredients(ingredients);
     }
 
     public String addIngredient(Ingredient ingredient) throws FailedToAddIngredientException,
@@ -39,12 +61,12 @@ public class IngredientService {
         }
     }
 
-    public void addAllIngredients(List<Ingredient> ingredients) throws FailedToAddIngredientException,
+    public void addMulitpleIngredients(List<Ingredient> ingredients) throws FailedToAddIngredientException,
             IngredientAlreadyExistsException {
 
         // note: essentially doing transaction here; if any of the ingredients exist, none of them are added
         for (Ingredient ing : ingredients) {
-            if (ingredientsDAO.findById(ing.getId()).isPresent())
+            if (ingredientsDAO.findByName(ing.getName()).isPresent())
                 throw new IngredientAlreadyExistsException(MessageFormat.format(
                         "Ingredient {0} already exists; none of the provided ingredients were added", ing));
         }

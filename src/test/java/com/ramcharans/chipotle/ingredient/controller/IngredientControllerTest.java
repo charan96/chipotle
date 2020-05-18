@@ -92,13 +92,13 @@ public class IngredientControllerTest {
 
     @Test
     public void testAddIngredientReturnsStringIdAndOkStatus() throws Exception {
-        Ingredient ing = new Ingredient("rice1", Ingredient.Type.RICE, 0.0);
+        IngredientRequest req = new IngredientRequest("rice1", Ingredient.Type.RICE, 0.0);
 
-        when(ingredientService.addIngredient(ing)).thenReturn("newid");
+        when(ingredientService.addIngredientFromIngredientRequest(req)).thenReturn("newid");
 
         mockMvc.perform(post("/ingredients/add")
                 .contentType("application/json")
-                .content(new ObjectMapper().writeValueAsString(ing)))
+                .content(new ObjectMapper().writeValueAsString(req)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("newid")));
@@ -107,13 +107,13 @@ public class IngredientControllerTest {
 
     @Test
     public void testAddIngredientReturnsInternalServerError() throws Exception {
-        Ingredient ing = new Ingredient("rice1", Ingredient.Type.RICE, 0.0);
+        IngredientRequest req = new IngredientRequest("rice1", Ingredient.Type.RICE, 0.0);
 
-        when(ingredientService.addIngredient(ing)).thenThrow(FailedToAddIngredientException.class);
+        when(ingredientService.addIngredientFromIngredientRequest(req)).thenThrow(FailedToAddIngredientException.class);
 
         mockMvc.perform(post("/ingredients/add")
                 .contentType("application/json")
-                .content(new ObjectMapper().writeValueAsString(ing)))
+                .content(new ObjectMapper().writeValueAsString(req)))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -122,7 +122,7 @@ public class IngredientControllerTest {
         List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
                 new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doNothing().when(ingredientService).addAllIngredients(ings);
+        doNothing().when(ingredientService).addMulitpleIngredients(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
                 .contentType("application/json")
@@ -132,25 +132,31 @@ public class IngredientControllerTest {
 
     @Test
     public void testAddManyIngredientsThrowsBadRequestWhenIngredientExists() throws Exception {
-        List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
-                new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
+        List<IngredientRequest> ings = Arrays.asList(new IngredientRequest("rice1", Ingredient.Type.RICE, 0.0),
+                new IngredientRequest("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doThrow(IngredientAlreadyExistsException.class).when(ingredientService).addAllIngredients(ings);
+        doThrow(IngredientAlreadyExistsException.class)
+                .when(ingredientService)
+                .addMultipleIngredientsFromIngredientRequestList(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
-                .contentType("application/json").content(new ObjectMapper().writeValueAsString(ings)))
+                .contentType("application/json")
+                .content(new ObjectMapper().writeValueAsString(ings)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testAddManyIngredientsThrowsInternalErrorWhenIngredientAdditionFails() throws Exception {
-        List<Ingredient> ings = Arrays.asList(new Ingredient("rice1", Ingredient.Type.RICE, 0.0),
-                new Ingredient("banzo", Ingredient.Type.BEANS, 0.0));
+        List<IngredientRequest> ings = Arrays.asList(new IngredientRequest("rice1", Ingredient.Type.RICE, 0.0),
+                new IngredientRequest("banzo", Ingredient.Type.BEANS, 0.0));
 
-        doThrow(FailedToAddIngredientException.class).when(ingredientService).addAllIngredients(ings);
+        doThrow(FailedToAddIngredientException.class)
+                .when(ingredientService)
+                .addMultipleIngredientsFromIngredientRequestList(ings);
 
         mockMvc.perform(post("/ingredients/addMany")
-                .contentType("application/json").content(new ObjectMapper().writeValueAsString(ings)))
+                .contentType("application/json")
+                .content(new ObjectMapper().writeValueAsString(ings)))
                 .andExpect(status().isInternalServerError());
     }
 

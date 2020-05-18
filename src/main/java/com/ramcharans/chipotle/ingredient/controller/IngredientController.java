@@ -15,10 +15,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+// TODO: add validation to all requests and inputs
+// TODO: look at debug of DAO for proxy class impl. by Spring and change DAO to MongoRepository extension
+// TODO: add logging
+// TODO: make swagger more documented if possible
+// TODO: add messaging impl. with this and Chef application (Kafka vs. RMQ)
 
 @RestController
 @Api(value = "Ingredient Management System")
@@ -38,34 +45,26 @@ public class IngredientController {
 
     @ApiOperation(value = "add 1 ingredient", response = String.class)
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    // TODO: change ingredient to ingredient Request
-    public ResponseEntity<Object> addIngredient(@RequestBody Ingredient ingredient) {
+    public ResponseEntity<Object> addIngredient(@RequestBody IngredientRequest ingredientRequest) {
         try {
-            String ingredientId = ingredientService.addIngredient(ingredient);
-            log.info("successfully added Ingredient: {}", ingredient);
+            String ingredientId = ingredientService.addIngredientFromIngredientRequest(ingredientRequest);
             return new ResponseEntity<>(ingredientId, HttpStatus.OK);
         } catch (IngredientAlreadyExistsException e) {
-            log.info("ingredient already exists: {}", ingredient);
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
         } catch (FailedToAddIngredientException e) {
-            log.info("failed to add ingredient: {}", ingredient);
             return new ResponseEntity<>("failed to add ingredient: ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @ApiOperation(value = "add mulitple ingredients")
+    @ApiOperation(value = "add multiple ingredients")
     @PostMapping(value = "/addMany", consumes = "application/json", produces = "application/json")
-    // TODO: change List<Ingredient> to List<IngredientRequest>
-    public ResponseEntity<Object> addIngredients(@RequestBody List<Ingredient> ingredients) {
+    public ResponseEntity<Object> addIngredients(@RequestBody List<IngredientRequest> ingredientRequests) {
         try {
-            ingredientService.addAllIngredients(ingredients);
-            log.info("successfully added ingredients: {}", ingredients);
+            ingredientService.addMultipleIngredientsFromIngredientRequestList(ingredientRequests);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FailedToAddIngredientException e) {
-            log.info("failed to add ingrediens: {}", ingredients);
             return new ResponseEntity<>("failed to add ingredients", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IngredientAlreadyExistsException e) {
-            log.info("An ingredient from the following ingredients already exists: {}", ingredients);
             return new ResponseEntity<>("ingredient already exists", HttpStatus.BAD_REQUEST);
         }
     }
@@ -76,10 +75,8 @@ public class IngredientController {
         Optional<Ingredient> ingredient = ingredientService.getIngredientById(id);
 
         if (ingredient.isPresent()) {
-            log.info("successfully found Ingredient with ID: {}", id);
             return new ResponseEntity<>(ingredient.get(), HttpStatus.OK);
         } else {
-            log.info("no ingredient found with ID: {}", id);
             return new ResponseEntity<>("no ingredient found with given ID", HttpStatus.NOT_FOUND);
         }
     }
@@ -90,10 +87,8 @@ public class IngredientController {
         List<Ingredient> type_filtered_ingredients = ingredientService.getIngredientsByType(type);
 
         if (type_filtered_ingredients.isEmpty()) {
-            log.info("no ingredients were found with type: {}", type);
             return new ResponseEntity<>("no ingredients found with given Type", HttpStatus.NOT_FOUND);
         } else {
-            log.info("following ingredients were found of type '{}': {}", type, type_filtered_ingredients);
             return new ResponseEntity<>(type_filtered_ingredients, HttpStatus.OK);
         }
     }
@@ -103,10 +98,8 @@ public class IngredientController {
     public ResponseEntity<Object> deleteIngredientById(@PathVariable String id) {
         try {
             ingredientService.deleteIngredient(id);
-            log.info("successfully deleted ID with type: {}", id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IngredientNotFoundException e) {
-            log.info("no ingredient found with ID '{}' to delete", id);
             return new ResponseEntity<>("ingredient not found", HttpStatus.NOT_FOUND);
         }
     }
