@@ -117,19 +117,6 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void testProcessPaymentReturnsCorrectValue() throws OrderNotFoundException, InvalidPaymentDetailsException,
-            PaymentTransactionFailedException {
-        Order order = mock(Order.class);
-        Payment payment = mock(Payment.class);
-        when(orderService.findOrder("id1")).thenReturn(order);
-
-        doReturn(cc).when(spy).getPaymentTransactionServiceByType(Payment.Type.CREDIT_CARD);
-
-        assertThat(spy.processPayment("id1", Payment.Type.CREDIT_CARD, Collections.singletonMap("id4", "id5")),
-                instanceOf(Payment.class));
-    }
-
-    @Test
     public void testProcessAndSavePaymentCallsProcessPayment() throws InvalidPaymentDetailsException,
             OrderNotFoundException, PaymentTransactionFailedException {
         Order order = mock(Order.class);

@@ -4,7 +4,6 @@ import com.ramcharans.chipotle.events.mealfulfilled.MealFulfilledEventProducer;
 import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import com.ramcharans.chipotle.order.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;

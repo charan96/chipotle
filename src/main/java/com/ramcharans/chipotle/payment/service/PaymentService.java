@@ -13,7 +13,6 @@ import com.ramcharans.chipotle.payment.model.Payment.Type;
 import com.ramcharans.chipotle.transaction.service.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -23,32 +22,34 @@ import java.util.Optional;
 
 @Service
 public class PaymentService {
-    @Autowired
-    PaymentDAO paymentDAO;
+    private final PaymentDAO paymentDAO;
+    private final OrderService orderService;
 
-    @Autowired
-    OrderService orderService;
+    private final PaymentSuccessEventProducer paymentSuccessEventProducer;
 
-    @Autowired
-    PaymentSuccessEventProducer paymentSuccessEventProducer;
-
-    @Autowired
-    @Qualifier("cashPayment")
-    PaymentTransactionService cashPaymentTransactionService;
-
-    @Autowired
-    @Qualifier("checkPayment")
-    PaymentTransactionService checkPaymentTransactionService;
-
-    @Autowired
-    @Qualifier("giftCardPayment")
-    PaymentTransactionService giftCardPaymentTransactionService;
-
-    @Autowired
-    @Qualifier("creditCardPayment")
-    PaymentTransactionService creditCardPaymentTransactionService;
+    private final PaymentTransactionService cashPaymentTransactionService;
+    private final PaymentTransactionService checkPaymentTransactionService;
+    private final PaymentTransactionService giftCardPaymentTransactionService;
+    private final PaymentTransactionService creditCardPaymentTransactionService;
 
     public static final Logger log = LoggerFactory.getLogger(PaymentService.class);
+
+    public PaymentService(PaymentDAO paymentDAO, OrderService orderService,
+                          PaymentSuccessEventProducer paymentSuccessEventProducer,
+                          @Qualifier("cashPayment") PaymentTransactionService cashPaymentTransactionService,
+                          @Qualifier("checkPayment") PaymentTransactionService checkPaymentTransactionService,
+                          @Qualifier("giftCardPayment") PaymentTransactionService giftCardPaymentTransactionService,
+                          @Qualifier("creditCardPayment") PaymentTransactionService creditCardPaymentTransactionService) {
+        this.paymentDAO = paymentDAO;
+        this.orderService = orderService;
+        this.paymentSuccessEventProducer = paymentSuccessEventProducer;
+
+        this.cashPaymentTransactionService = cashPaymentTransactionService;
+        this.checkPaymentTransactionService = checkPaymentTransactionService;
+        this.giftCardPaymentTransactionService = giftCardPaymentTransactionService;
+        this.creditCardPaymentTransactionService = creditCardPaymentTransactionService;
+
+    }
 
     public Payment processAndSavePayment(String orderId, Type paymentType, Map<String, String> paymentDetails) throws
             InvalidPaymentDetailsException, PaymentTransactionFailedException, OrderNotFoundException {

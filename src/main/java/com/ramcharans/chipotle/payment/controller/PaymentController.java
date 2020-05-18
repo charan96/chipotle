@@ -21,10 +21,13 @@ import java.text.MessageFormat;
 @Api(value = "Payment Management System")
 @RequestMapping("/payment")
 public class PaymentController {
-    @Autowired
     PaymentService paymentService;
 
     public static final Logger log = LoggerFactory.getLogger(PaymentController.class);
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @ApiOperation(value = "process the payment based on information provided", response = Payment.class)
     @PostMapping(value = "/process", consumes = "application/json", produces = "application/json")

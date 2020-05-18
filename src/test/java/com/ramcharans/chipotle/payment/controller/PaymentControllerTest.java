@@ -42,9 +42,7 @@ public class PaymentControllerTest {
 
     @Before
     public void setup() {
-        paymentController = new PaymentController();
-        paymentController.paymentService = paymentService;
-
+        paymentController = new PaymentController(paymentService);
         mvc = MockMvcBuilders.standaloneSetup(paymentController).build();
     }
 
