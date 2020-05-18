@@ -40,9 +40,7 @@ public class OrderControllerTest {
 
     @Before
     public void setup() {
-        orderController = new OrderController();
-        orderController.orderService = orderService;
-
+        orderController = new OrderController(orderService);
         mvc = MockMvcBuilders.standaloneSetup(orderController).build();
     }
 

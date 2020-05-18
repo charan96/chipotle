@@ -8,7 +8,6 @@ import com.ramcharans.chipotle.order.exceptions.OrderNotFoundException;
 import com.ramcharans.chipotle.order.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -17,13 +16,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    @Autowired
     IngredientService ingredientService;
-
-    @Autowired
     OrderDAO orderDAO;
 
     public static final Logger log = LoggerFactory.getLogger(OrderService.class);
+
+    public OrderService(IngredientService ingredientService, OrderDAO orderDAO) {
+        this.ingredientService = ingredientService;
+        this.orderDAO = orderDAO;
+    }
 
     public Order buildAndSaveOrder(String customerId, List<String> ingredientIds) throws IngredientNotFoundException {
         Order order = buildOrder(customerId, ingredientIds);

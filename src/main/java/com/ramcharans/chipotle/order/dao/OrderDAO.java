@@ -14,10 +14,13 @@ import java.util.Optional;
 
 @Repository
 public class OrderDAO {
-    @Autowired
     MongoTemplate mongoTemplate;
 
     public static final Logger log = LoggerFactory.getLogger(OrderDAO.class);
+
+    public OrderDAO(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     public List<Order> getAllOrders() {
         return mongoTemplate.findAll(Order.class);
