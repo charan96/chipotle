@@ -13,11 +13,13 @@ import static java.lang.Thread.sleep;
 
 @Service
 public class ChefService {
-    @Autowired
-    MealFulfilledEventProducer mealFulfilledEventProducer;
+    private final OrderService orderService;
+    private final MealFulfilledEventProducer mealFulfilledEventProducer;
 
-    @Autowired
-    OrderService orderService;
+    public ChefService(OrderService orderService, MealFulfilledEventProducer mealFulfilledEventProducer) {
+        this.orderService = orderService;
+        this.mealFulfilledEventProducer = mealFulfilledEventProducer;
+    }
 
     public void prepareMealFromOrder(String orderId) {
         try {
@@ -32,7 +34,7 @@ public class ChefService {
         }
     }
 
-    public void sendMealFulfilledEvent(String orderId) {
+    private void sendMealFulfilledEvent(String orderId) {
         mealFulfilledEventProducer.send(orderId);
     }
 }
