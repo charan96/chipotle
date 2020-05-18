@@ -13,7 +13,7 @@ public class PaymentSuccessEvent {
     /* NOTE: events should contain information on when and who created the event; currently, we're ignoring who */
 
     // NOTE: the JSON Format is required for deserialization support for LocalDateTime so Jackson can deserialize it
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime timestamp;
     private Payment payment;
 

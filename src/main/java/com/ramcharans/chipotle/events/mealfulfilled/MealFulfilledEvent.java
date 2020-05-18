@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class MealFulfilledEvent {
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+
+    // NOTE: the JSON Format is required for deserialization support for LocalDateTime so Jackson can deserialize it
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     LocalDateTime timestamp;
     String orderId;
 
