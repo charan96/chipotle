@@ -93,4 +93,11 @@ public class RawIngredientController {
             return new ResponseEntity<>("no raw ingredient found with given ID", HttpStatus.BAD_REQUEST);
         }
     }
+    
+    @ApiOperation(value = "delete all raw ingredients")
+    @DeleteMapping(value = "/delete/all", produces = "application/json")
+    public ResponseEntity<Object> deleteAll() {
+        rawIngredientService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -61,8 +61,13 @@ public class RawIngredientService {
             throw new RawIngredientNotFoundException();
     }
     
+    public void deleteAll() {
+        rawIngredientRepo.deleteAll();
+    }
+    
     private RawIngredient convertRawIngredientRequestToRawIngredient(RawIngredientRequest rawIngredientRequest) {
-        return new RawIngredient(rawIngredientRequest.getName(), rawIngredientRequest.getStock());
+        return new RawIngredient(rawIngredientRequest.getName(), rawIngredientRequest.getStock(),
+                rawIngredientRequest.getCapacity());
     }
     
     private void addMultipleRawIngredients(List<RawIngredient> ingredients) throws FailedToAddRawIngredientException,

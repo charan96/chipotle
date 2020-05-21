@@ -107,6 +107,13 @@ public class PreppedIngredientController {
         }
     }
     
+    @ApiOperation(value = "delete all prepped ingredients")
+    @DeleteMapping(value = "/delete/all", produces = "application/json")
+    public ResponseEntity<Object> deleteAll() {
+        preppedIngredientService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
     @ApiOperation(value = "find all prepped ingredients containing the given raw ingredient ID",
             response = PreppedIngredient.class, responseContainer = "List")
     @GetMapping(value = "/filter/raw_ingredient/{rawIngredientId}", produces = "application/json")

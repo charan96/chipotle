@@ -94,6 +94,10 @@ public class PreppedIngredientService {
         }
     }
     
+    public void deleteAll() {
+        preppedIngredientRepo.deleteAll();
+    }
+    
     // fixme: implement this
     public void replenishPreppedIngredientStock(String preppedIngredientId, @Min(value = 0) int newStockLevel) {
         // PreppedIngredient ingredient = preppedIngredientRepo.findById(preppedIngredientId);
@@ -106,7 +110,7 @@ public class PreppedIngredientService {
         List<RawIngredient> rawIngredients = new ArrayList<>();
         
         // check to make sure all raw ingredients provided for prepped ingredient are valid
-        for (String rawIngredientId : preppedIngredientRequest.getRawIngredientIds()) {
+        for (String rawIngredientId : preppedIngredientRequest.getRawIngredientsNeeded()) {
             Optional<RawIngredient> rawIngredient = rawIngredientService.findRawIngredientById(rawIngredientId);
             
             if (!rawIngredient.isPresent())
@@ -117,7 +121,8 @@ public class PreppedIngredientService {
         }
         
         return new PreppedIngredient(preppedIngredientRequest.getName(), preppedIngredientRequest.getType(),
-                preppedIngredientRequest.getPrice(), rawIngredients, preppedIngredientRequest.getStock());
+                preppedIngredientRequest.getPrice(), rawIngredients, preppedIngredientRequest.getStock(),
+                preppedIngredientRequest.getCapacity());
     }
     
     private String safeAddPreppedIngredient(PreppedIngredient ingredient) throws PreppedIngredientAlreadyExistsException, FailedToAddPreppedIngredientException {

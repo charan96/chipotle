@@ -17,30 +17,27 @@ import java.util.List;
 @Document(collection = "prepped_ingredient")
 public class PreppedIngredient implements Serializable {
     public static enum Type {RICE, MEAT, VEGGIE, SALSA, BEANS, ADDON}
-
+    
     @Id
     private String id;
     private String name;
     private Type type;
     private Double price;
-
+    
     @DBRef
     private List<RawIngredient> rawIngredientsNeeded;
-
+    
     private Integer stock;
-
-    public PreppedIngredient(String name, Type type, Double price, List<RawIngredient> rawIngredients, Integer stock) {
+    
+    private Integer capacity;
+    
+    public PreppedIngredient(String name, Type type, Double price, List<RawIngredient> rawIngredients, Integer stock,
+                             Integer capacity) {
         this.name = name;
         this.type = type;
         this.price = price;
         this.rawIngredientsNeeded = rawIngredients;
         this.stock = stock;
-    }
-
-    public PreppedIngredient(String name, Type type, Double price, List<RawIngredient> rawIngredients) {
-        this.name = name;
-        this.type = type;
-        this.price = price;
-        this.rawIngredientsNeeded = rawIngredients;
+        this.capacity = capacity;
     }
 }

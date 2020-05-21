@@ -29,18 +29,23 @@ public class PreppedIngredientRequest {
     
     @ApiModelProperty(value = "List of Raw Ingredient IDs need to prepare the Ingredient")
     @NotNull
-    List<String> rawIngredientIds;
+    List<String> rawIngredientsNeeded;
     
     @ApiModelProperty(value = "stock of the Prepped Ingredient")
     @Min(value = 0, message = "cannot be less than 0")
     Integer stock;
     
+    @ApiModelProperty(value = "storage capacity of the prepped ingredient")
+    @Min(value = 0, message = "cannot be less than 0")
+    Integer capacity;
+    
     public PreppedIngredientRequest(String name, PreppedIngredient.Type type, Double price,
-                                    List<String> rawIngredientIds) {
+                                    List<String> rawIngredientsNeeded, Integer capacity) {
         this.name = name;
         this.type = type;
         this.price = price;
-        this.rawIngredientIds = rawIngredientIds;
+        this.rawIngredientsNeeded = rawIngredientsNeeded;
+        this.capacity = capacity;
         this.stock = 0;
     }
 }

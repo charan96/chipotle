@@ -19,8 +19,11 @@ public class RawIngredient implements Serializable {
     
     private Integer stock;
     
-    public RawIngredient(String name, Integer stock) {
+    private Integer capacity;
+    
+    public RawIngredient(String name, Integer stock, Integer capacity) {
         this.name = name;
         this.stock = stock;
+        this.capacity = capacity;
     }
 }

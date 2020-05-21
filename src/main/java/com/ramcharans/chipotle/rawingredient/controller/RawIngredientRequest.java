@@ -20,8 +20,13 @@ public class RawIngredientRequest {
     @Min(value = 0, message = "Cannot be less than 0")
     int stock;
     
-    public RawIngredientRequest(String name) {
+    @ApiModelProperty(value = "storage capacity of the raw ingredient")
+    @Min(value = 0, message = "cannot be less than 0")
+    int capacity;
+    
+    public RawIngredientRequest(String name, int capacity) {
         this.name = name;
+        this.capacity = capacity;
         this.stock = 0;
     }
 }
