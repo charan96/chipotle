@@ -1,8 +1,8 @@
 package com.ramcharans.chipotle.order.model;
 
 
-import com.ramcharans.chipotle.ingredient.model.Ingredient;
 import com.ramcharans.chipotle.payment.model.Payment;
+import com.ramcharans.chipotle.preppedingredient.model.PreppedIngredient;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -16,11 +16,11 @@ public class Order {
     @Id
     private String id;
     private String customerId;
-
+    
     @DBRef
-    private List<Ingredient> ingredients;
+    private List<PreppedIngredient> ingredients;
     private Double total;
-
+    
     @DBRef
     private Payment payment;
     private boolean isFulfilled;
