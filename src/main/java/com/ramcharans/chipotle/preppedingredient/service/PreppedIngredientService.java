@@ -98,12 +98,29 @@ public class PreppedIngredientService {
         preppedIngredientRepo.deleteAll();
     }
     
-    // fixme: implement this
-    public void replenishPreppedIngredientStock(String preppedIngredientId, @Min(value = 0) int newStockLevel) {
-        // PreppedIngredient ingredient = preppedIngredientRepo.findById(preppedIngredientId);
-        // ingredient.setStock(newStockLevel);
-        //
-        // preppedIngredientRepo.save(ingredient);
+    public boolean isIngredientStockAboveThreshold(PreppedIngredient ingredient) {
+        return ingredient.getStock() > computeCapacityThreshold(ingredient);
+    }
+    
+    public boolean isIngredientStockAtThreshold(PreppedIngredient ingredient) {
+        return ingredient.getStock().equals(computeCapacityThreshold(ingredient));
+    }
+    
+    public boolean isIngredientStockEmpty(PreppedIngredient ingredient) {
+        return ingredient.getStock() == 0;
+    }
+    
+    public void subtract1FromPreppedIngredientsStock(PreppedIngredient ingredient) {
+        ingredient.setStock(ingredient.getStock() - 1);
+    }
+    
+    public void updatePreppedIngredientStockLevel(PreppedIngredient preppedIngredient, int newStockLevel) {
+        preppedIngredient.setStock(newStockLevel);
+        preppedIngredientRepo.save(preppedIngredient);
+    }
+    
+    private Integer computeCapacityThreshold(PreppedIngredient ingredient) {
+        return (int) Math.floor(0.1 * ingredient.getCapacity());
     }
     
     private PreppedIngredient convertPreppedIngredientToPreppedIngredient(PreppedIngredientRequest preppedIngredientRequest) throws RawIngredientNotFoundException {

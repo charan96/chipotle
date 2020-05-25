@@ -11,16 +11,16 @@ import java.text.MessageFormat;
 @Component
 public class PaymentSuccessEventConsumer {
     private final ChefService chefService;
-
+    
     private static final Logger log = LoggerFactory.getLogger(PaymentSuccessEventConsumer.class);
-
+    
     public PaymentSuccessEventConsumer(ChefService chefService) {
         this.chefService = chefService;
     }
-
+    
     @RabbitListener(queues = "${PAYMENT_SUCCESS_QUEUE}")
     public void receive(PaymentSuccessEvent event) {
         log.info(MessageFormat.format("received event message: {0}", event));
-        chefService.prepareMealFromOrder(event.getPayment().getOrderId());
+        chefService.prepareMeal(event.getPayment().getOrderId());
     }
 }

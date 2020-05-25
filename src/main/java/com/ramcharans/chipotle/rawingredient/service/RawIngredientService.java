@@ -66,8 +66,7 @@ public class RawIngredientService {
     }
     
     private RawIngredient convertRawIngredientRequestToRawIngredient(RawIngredientRequest rawIngredientRequest) {
-        return new RawIngredient(rawIngredientRequest.getName(), rawIngredientRequest.getStock(),
-                rawIngredientRequest.getCapacity());
+        return new RawIngredient(rawIngredientRequest.getName());
     }
     
     private void addMultipleRawIngredients(List<RawIngredient> ingredients) throws FailedToAddRawIngredientException,

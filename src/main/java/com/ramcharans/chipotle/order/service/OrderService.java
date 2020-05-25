@@ -57,9 +57,11 @@ public class OrderService {
     
     private void validateIngredientIds(List<String> ingredientIds) throws MealIngredientNotFoundException {
         for (String ingredientId : ingredientIds) {
-            if (!mealIngredientService.findIngredientById(ingredientId).isPresent())
+            if (!mealIngredientService.findIngredientById(ingredientId).isPresent()) {
+                log.info("no ingredient found for id: {}", ingredientId);
                 throw new MealIngredientNotFoundException(MessageFormat.format(
                         "No ingredient found for id: {0}", ingredientId));
+            }
         }
     }
     
