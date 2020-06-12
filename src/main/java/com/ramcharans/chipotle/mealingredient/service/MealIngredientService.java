@@ -45,7 +45,6 @@ public class MealIngredientService {
             if (preppedIngredientService.isIngredientStockEmpty(ing))
                 return false;
         }
-        
         return true;
     }
     

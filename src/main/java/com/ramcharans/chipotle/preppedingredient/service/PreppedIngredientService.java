@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Min;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,12 +82,10 @@ public class PreppedIngredientService {
         Optional<RawIngredient> rawIngredient = rawIngredientService.findRawIngredientById(rawIngredientId);
         
         if (rawIngredient.isPresent()) {
-            List<PreppedIngredient> filteredPreppedIngredients = getAllPreppedIngredients()
+            return getAllPreppedIngredients()
                     .stream()
                     .filter(ing -> ing.getRawIngredientsNeeded().contains(rawIngredient.get()))
                     .collect(Collectors.toList());
-            
-            return filteredPreppedIngredients;
         } else {
             throw new RawIngredientNotFoundException();
         }
@@ -96,10 +93,6 @@ public class PreppedIngredientService {
     
     public void deleteAll() {
         preppedIngredientRepo.deleteAll();
-    }
-    
-    public boolean isIngredientStockAboveThreshold(PreppedIngredient ingredient) {
-        return ingredient.getStock() > computeCapacityThreshold(ingredient);
     }
     
     public boolean isIngredientStockAtThreshold(PreppedIngredient ingredient) {

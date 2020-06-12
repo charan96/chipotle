@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @Api(value = "Prepped Ingredient Management Service")
-@RequestMapping(path = "/prepped_ingredient")
+@RequestMapping(path = "/prepped_ingredients")
 public class PreppedIngredientController {
     PreppedIngredientService preppedIngredientService;
     
