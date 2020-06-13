@@ -42,14 +42,30 @@ application is detailed. Specific attention is drawn to the Security and Event M
    
 2. How do I run the application on my local machine?
    
-   If you would like to run the entire application on the local machine including the database and event management components,
-   the local-dev branch of this application should be cloned from GitHub. The Docker Image needed to get application running
-   is located at: <DockerHub location>. <Step by step details for running>
+   If you would like to run the entire application on the local machine including the database and event management 
+   components, the local-dev branch of this application should be cloned from GitHub. All the files needed to run the 
+   application locally are located in the run/ directory. The run/ directory contains the following:
+   - **Dockerfile** - used for building the image containing all the tools necessary to run the application.
+   - **docker-compose.yml** - used to setup the volumes and network settings needed to run the application. 
+   - **app/** - this directory contains the JAR file of the application (the JAR needs to be named `chipotle.jar`). 
+   - **chipotle_db/** - this directory contains the mongodump with some sample data.
+   - **entryscript.sh** - the script that will be executed at ENTRYPOINT of the Dockerfile.  
+   - **jar-build.sh** - builds the jar file of the application and places it into the app/ directory.
    
-   If you would like to run only the application on the location but use the remaining components (DB + Events) from AWS, then 
-   please follow the following steps: <the URL of the running application>
+   Steps to run the application:
+   1. cd into run/ directory
+   2. run **./jar-build.sh** -- creates the JAR file and places it in app/ as `chipotle.jar`
+   3. run **docker-compose up** -- builds the Docker image on the first run; subsequent runs use the built image to run the application.
+   4. **hit Ctrl-C** and run **docker-compose down --rmi all** -- stops the container from running and removes all containers and images.
+   
+   Alternatively, a pre-built image is located on DockerHub at `ramcharans/chipotle:local-dev`. However, this image may not be the most 
+   updated version and may lead to errors. The steps previously outlined is the recommended way to run the application.  
+   
+   If you would like to run only the application on the location but use the remaining components (DB + Events) from 
+   AWS, then please follow the following steps: <the URL of the running application>
   
 3. Which Java version should be used?
    
-   At least Java 8 should be used since Java 8 specific features are used throughout the application. Later versions of Java may work
-   but we leave it to the user to figure out if any problems arise. Versions of other tools/frameworks are located in the pom.xml file.  
+   At least Java 8 should be used since Java 8 specific features are used throughout the application. Later versions 
+   of Java may work but we leave it to the user to figure out if any problems arise. Versions of other tools/frameworks 
+   are located in the pom.xml file.  
