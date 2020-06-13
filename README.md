@@ -35,12 +35,8 @@ application is detailed. Specific attention is drawn to the Security and Event M
 3. Interaction between Order and Chef
 4. Interaction between Chef and Sous Chef
 
-## FAQs
-1. How do I view the API specs?
-    
-   We use Swagger to detail all the specifications required to interact with the API: http://localhost:8080/swagger-ui.html#/
-   
-2. How do I run the application on my local machine?
+## FAQs   
+1. How do I run the application on my local machine?
    
    If you would like to run the entire application on the local machine including the database and event management 
    components, the local-dev branch of this application should be cloned from GitHub. All the files needed to run the 
@@ -63,7 +59,11 @@ application is detailed. Specific attention is drawn to the Security and Event M
    
    If you would like to run only the application on the location but use the remaining components (DB + Events) from 
    AWS, then please follow the following steps: <the URL of the running application>
-  
+   
+2. How do I view the API specs?
+    
+   We use Swagger to detail all the specifications required to interact with the API: http://localhost:8080/swagger-ui.html#/
+ 
 3. Which Java version should be used?
    
    At least Java 8 should be used since Java 8 specific features are used throughout the application. Later versions 
