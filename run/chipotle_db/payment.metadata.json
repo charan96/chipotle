@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"chipotle_db.payment"}],"uuid":"2b1e517c911c4288a0c1a2cea4538e1d"}

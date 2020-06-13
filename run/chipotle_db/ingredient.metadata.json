@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"chipotle_db.ingredient"}],"uuid":"aa767665cb8140f5a1f0ca7c814844ab"}
