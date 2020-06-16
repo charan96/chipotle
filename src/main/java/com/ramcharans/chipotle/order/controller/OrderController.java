@@ -29,7 +29,7 @@ public class OrderController {
     }
     
     @ApiOperation(value = "get all orders", response = Order.class, responseContainer = "List")
-    @GetMapping(path = "/", produces = "application/json")
+    @GetMapping(path = "", produces = "application/json")
     public ResponseEntity<Object> getAllOrders() {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
     }
