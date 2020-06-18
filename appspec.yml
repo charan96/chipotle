@@ -22,11 +22,16 @@ os: linux
 # If you are not copying any files to the Amazon EC2 instance, then remove the
 #   "files" section altogether. A blank or incomplete "files" section
 #   may cause associated deployments to fail.
+
+# =========================== NOTES ===========================
+# source here can be either S3 or the GitHub repo depending on how you're feeding in the artifacts
+# If you're using codepipeline, codebuild creates the S3 bucket with the artifacts specified in buildspec;
+#    so, source here refers to this S3 bucket. The following lines copy the target folder from the S3 bucket to the
+#    /app/target in the EC2 instance; if you ssh into the instance, you should be able to see it.
+# =============================================================
 files:
   - source: /target
     destination: /app/target
-#  - source: /pom.xml
-#    destination: /app
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions"
 #   section here that describes special permissions to apply to the files
@@ -79,6 +84,11 @@ hooks:
   # During the ApplicationStop deployment lifecycle event, run the commands
   #   in the script specified in "location" starting from the root of the
   #   revision's file bundle.
+
+  # =========================== NOTES ===========================
+  # location here refers to the location/path in the source; if using GitHub, this is from the base of the repo
+  #    if using codepipeline or S3-based deploy, this is the root of the S3 bucket where codebuild saves the artifacts
+  # =============================================================
   ApplicationStop:
     - location: /scripts/stopApplication.sh
       runas: root
