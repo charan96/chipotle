@@ -18,3 +18,4 @@ artifacts:
   files:
     - target/chipotle-0.0.1-SNAPSHOT.jar
     - appspec.yml
+    - scripts
