@@ -6,3 +6,4 @@
 PID=`ps -C java -o pid=`
 
 kill -9 $PID
+rm -rf /app
